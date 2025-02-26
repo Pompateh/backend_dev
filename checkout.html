@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Page</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Literata:ital,opsz,wght@0,7..72,200..900;1,7..72,200..900&family=Oswald:wght@200..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/checkout.css">
+    <link rel="stylesheet" href="css/qr_content.css">
+    <script src="https://www.paypal.com/sdk/js?client-id=AZsb_HDEyJctNpDFY_7qERFCSu7JpUHH87VoxQcjFgtKRrDV6yo5keDdCsDm8w-vJ3tbRrB-B-WZXZ4q&currency=USD"></script>
+</head>
+<body>
+    <div class="checkout-container">
+        <header class="checkout-header">
+            <a href="shop.html" class="back-button" id="back-button" title="Back">Back</a>
+            <img src="./assets/logo-01.png" alt="Logo" class="logo">
+            <button class="close-button" id="close-button" title="Close">Close</button>
+            <h1>Your Cart!</h1>
+        </header>
+
+        <div class="checkout-content">
+            <div class="cart-table-container">
+                <table class="cart-table">
+                    <thead>
+                        <tr>
+                            <th>PRODUCT</th>
+                            <th>AMOUNT</th>
+                            <th>PRICE</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cart-items">
+                        <!-- Items will be dynamically populated -->
+                    </tbody>
+                </table>
+            </div>
+            <table class="cart-table">
+                <tfoot>
+                    <tr>
+                        <td colspan="2" class="total-label">TOTAL</td>
+                        <td id="checkout-total-price" class="total-price">0.00$</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <footer class="checkout-footer">
+            <div class="custom-fields">
+                <label for="customer-email">Email:</label>
+                <input type="email" id="customer-email" placeholder="Email is required for checkout" required>
+            </div>
+            <p>Price does not include shipping fee</p>
+            <button class="gotoqr-button" id="gotoqr-button">Checkout with QR</button>
+            <div id="paypal-button-container"></div>
+        </footer>
+    </div>
+
+    <!-- QR Code Section (Initially Hidden) -->
+    <div class="qr-container" style="display: none;">
+        <button class="close-button" id="qr-close-button" title="Close">&times;</button>
+        <header class="qr-header">
+            <img src="./assets/logo-01.png" alt="Logo" class="logo">
+            <p id="paymentMessage"></p>
+        </header>
+        <div class="qr-content">
+            <img src="./assets/image/QR_code.png" alt="QR Code" class="qr-image">
+            <form id="email-form">
+                <input type="email" name="email" id="qr-email" class="qr-email" placeholder="Enter your email" required>
+                <input type="text" name="order-details" id="order-details" class="order-details" placeholder="Enter order details" required>
+                <input type="submit" value="Submit" class="send-button" id="submit">
+            </form>
+        </div>
+        <footer class="qr-footer">
+            <p>Fill in your email to receive your file.</p>
+            <p>We will send the file after receiving your payment.</p>
+            <p>(Please send the screenshot of digital payment)</p>
+        </footer>
+    </div>
+
+    <div id="toast" class="toast">Your order has been received!</div>
+    <div id="loading" class="loading-indicator">Processing...</div>
+
+    <script src="js/common.js"></script>
+    <script src="js/checkout_script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkoutContainer = document.querySelector('.checkout-container');
+            const qrContainer = document.querySelector('.qr-container');
+            const gotoQrButton = document.getElementById('gotoqr-button');
+            const qrCloseButton = document.getElementById('qr-close-button');
+            const form = document.getElementById('email-form');
+            const paymentMessage = document.getElementById('paymentMessage');
+            const qrEmailInput = document.getElementById('qr-email');
+            const orderDetailsInput = document.getElementById('order-details');
+    
+            function showToast(message) {
+                const toast = document.getElementById('toast');
+                toast.textContent = message;
+                toast.className = 'toast show';
+                setTimeout(() => {
+                    toast.className = toast.className.replace('show', '');
+                }, 3000);
+            }
+    
+            function showLoading(show) {
+                const loadingIndicator = document.getElementById('loading');
+                loadingIndicator.style.display = show ? 'block' : 'none';
+            }
+    
+            gotoQrButton.addEventListener('click', function() {
+                checkoutContainer.style.display = 'none';
+                qrContainer.style.display = 'block';
+                updateQRDetails();
+            });
+    
+            qrCloseButton.addEventListener('click', function() {
+                qrContainer.style.display = 'none';
+                checkoutContainer.style.display = 'block';
+            });
+    
+            function updateQRDetails() {
+                const totalAmount = document.getElementById('checkout-total-price').textContent;
+                const email = document.getElementById('customer-email').value;
+                const orderDetails = Array.from(document.querySelectorAll('#cart-items tr'))
+                    .map(row => row.cells[0].textContent + ' x ' + row.cells[1].textContent)
+                    .join(', ');
+    
+                paymentMessage.textContent = `Please pay the total of ${totalAmount} to complete payment`;
+                qrEmailInput.value = email;
+                orderDetailsInput.value = orderDetails;
+            }
+    
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                showLoading(true);
+    
+                const formData = new FormData(form);
+    
+                fetch('https://script.google.com/macros/s/AKfycby98xa-011WDiw8ycxQMuunYESZ0ZeqZL89cS2dfHrnwLRNJF8ltLh0SdBx-SQaGEv7/exec', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    showLoading(false);
+                    if (data.result === 'success') {
+                        showToast('Thank you! Your order has been received.');
+                        form.reset();
+                        try {
+                            clearCart();
+                        } catch (error) {
+                            console.error('Error clearing cart:', error);
+                        }
+                        window.location.href = 'confirm.html';
+                    } else {
+                        showToast('Error: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    showLoading(false);
+                    console.error('Error:', error);
+                    showToast('An error occurred. Please try again.');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

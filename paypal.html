@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Page</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Literata:ital,opsz,wght@0,7..72,200..900;1,7..72,200..900&family=Oswald:wght@200..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/checkout.css">
+</head>
+<body>
+    <div class="checkout-container">
+        <header class="checkout-header">
+            <a href="shop.html" class="back-button" id="back-button" title="Back">Back</a>
+            <img src="./assets/logo-01.png" alt="Logo" class="logo">
+            <button class="close-button" id="close-button" title="Close">Close</button>
+            <div><h1>Your Cart!</h1></div>
+            
+        </header>
+        
+        <table class="cart-table">
+            <thead>
+                <tr>
+                    <th>PRODUCT</th>
+                    <th>AMOUNT</th>
+                    <th>PRICE</th>
+                </tr>
+            </thead>
+            <tbody id="cart-items">
+                <!-- Items will be dynamically populated -->
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="2" class="total-label">TOTAL</td>
+                    <td id="checkout-total-price" class="total-price">0.00$</td>
+                </tr>
+            </tfoot>
+        </table>
+        
+        <footer class="checkout-footer">
+            <p>Price does not include shipping fee</p>
+            <button class="purchase-button" id="purchase-button">Purchase</button>
+        </footer>
+    </div>
+
+    <script src="js/checkout_script.js"></script>
+    <script src="js/common.js"></script>   
+</body>
+</html>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Literata:ital,opsz,wght@0,7..72,200..900;1,7..72,200..900&family=Oswald:wght@200..700&display=swap" rel="stylesheet">
+    <title>Process</title>
+    <style>
+        body { 
+            font-family: 'Literata';
+            margin: 20px 40px; 
+            padding: 0; 
+            background-color: #f8f8f8; 
+        }
+        .container { 
+            max-width: 100%; 
+            margin: auto; 
+            background: white; 
+        }
+        .header, .tab-header h2, .footer, .process-step h3{ 
+        font-family: 'Bebas Neue', sans-serif;
+    }
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 20px 0; 
+            border-bottom: 1px solid #ddd;
+        }
+        .header h2 { 
+            margin: 0; 
+            cursor: pointer; 
+            font-size: 14px; 
+            text-transform: uppercase; 
+            color: #888; 
+            font-family: 'Bebas Neue';
+        }
+        .active { 
+            font-weight: bold; 
+            color: black; 
+        }
+
+        .tab-header {
+        display: flex;
+        justify-content: center;
+        flex-grow: 1;
+    }
+
+        .process-step {
+        display: flex;
+        margin: 20px;
+    }
+    .process-step img {
+        width: 50%;
+        height: auto;
+        object-fit: cover;
+        border-radius: 15px;
+    }
+    .process-step-content {
+        width: 50%;
+        padding: 0 20px;
+        display: flex;
+        flex-direction: column;
+    }
+    .process-step.reverse {
+        flex-direction: row-reverse;
+    }
+    .process-step.reverse .process-step-content {
+        padding: 0 20px 0 0;
+    }
+    .process-step:not(.reverse) .process-step-content {
+        padding: 0 0 0 20px;
+    }
+
+    .step-title {
+    font-size: 60px;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin: 0;
+    padding: 0;
+}
+    .navigation {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #f8f8f8;
+        margin: 20px 30px;
+    }
+    .navigation button {
+        padding: 10px 0px;
+        margin: 0;
+        border: none;
+        background: transparent;
+        color: black;
+        text-transform: uppercase;
+        cursor: pointer;
+        font-size: 30px;
+        font-family: 'Bebas Neue', sans-serif;
+        font-weight: 400;
+        line-height: 36px;
+    }
+    
+        .hidden { 
+            display: none; 
+        }
+        .footer { 
+            text-align: center; 
+            margin-top: 20px; 
+            font-size: 14px; 
+            color: #888; 
+            text-transform: uppercase;
+        }
+        .step-number {
+            font-size: 60px;
+            font-weight: 400;
+            margin: 0px;
+            font-family: 'Bebas Neue', sans-serif;
+            padding: 0px;
+            line-height: 1;
+        }
+
+        .navigation button {
+        font-weight: bold;
+    }
+
+    .tab-header {
+        display: flex;
+        justify-content: center;
+    }
+
+    .tab-header h2 {
+        font-size: 25px;
+    }
+
+    .tab-header h2.active {
+        color: black;
+        border-bottom: 2px solid black;
+    }
+    #clientTab, #designTab {
+        font-family: 'Bebas Neue', sans-serif;
+        cursor: pointer;
+        transition: color 0.3s, border-bottom 0.3s;
+        font-weight: 400;
+        font-size: 45px;
+    }
+
+    #clientTab.active, #designTab.active {
+        color: black;
+    }
+
+    #clientTab:not(.active), #designTab:not(.active) {
+        color: #888;
+        border-bottom: none;
+    }
+    @media (max-width: 1200px) {
+        .step-title {
+            font-size: 36px;
+        }
+    }
+
+    @media (max-width: 992px) {
+        .process-step {
+            flex-direction: column;
+        }
+        .process-step.reverse {
+            flex-direction: column;
+        }
+        .process-step img,
+        .process-step-content {
+            width: 100%;
+        }
+        .process-step-content {
+            padding: 20px 0;
+        }
+    }
+    p{
+        font-style: normal;
+font-weight: 500;
+font-size: 20px;
+line-height: 120%;
+    }
+    .footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #f8f8f8;
+        margin: 20px;
+        padding-top: 20px;
+        padding-bottom: 10px;
+    }
+
+    .footer button {
+        padding: 10px 0px;
+        margin: 0;
+        border: none;
+        background: transparent;
+        color: black;
+        text-transform: uppercase;
+        cursor: pointer;
+        font-size: 30px;
+        font-family: 'Bebas Neue', sans-serif;
+        font-weight: 400;
+        line-height: 36px;
+    }
+
+    .footer-logo {
+        max-height: 50px;
+        width: auto;
+    }
+
+    @media (max-width: 768px) {
+        .footer {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .footer button {
+            font-size: 24px;
+        }
+
+        .footer-logo {
+            max-height: 40px;
+        }
+    }
+
+    </style>
+</head>
+<body>
+    <div class="navigation">
+        <button onclick="prevStep()">Back</button>
+        <h2 id="clientTab" class="active" onclick="switchTab('client')">Client Process</h2>
+        <h2 id="designTab" onclick="switchTab('design')">Design Process</h2>
+        <button onclick="nextStep()">Next</button>
+    </div>
+        
+        <div id="clientProcess">
+            <div class="process-step">
+                <img src="./assets/image/NEWSTALGIA WEB a-07.jpg" alt="Step 1">
+                <div class="process-step-content">
+                    <h2 class="step-number">01.</h2>
+                    <h3 class="step-title">INITIAL CONSULTATION & DISCOVERY</h3>
+                    <p>We start with a deep dive into your business, goals, and vision. This step involves understanding your project scope, target audience, and desired outcomes. We'll discuss your preferences, analyze your competition, and define the project scope.</p>
+                </div>
+            </div>
+            <div class="process-step reverse">
+                <img src="./assets/image/NEWSTALGIA WEB a-07.jpg" alt="Step 2">
+                <div class="process-step-content">
+                    <h2 class="step-number">02.</h2>
+                    <h3 class="step-title">TAILORED PROPOSAL</h3>
+                    <p>Based on the insights from our consultation, I'll create a customized proposal. This will typically include multiple design concepts, a detailed project timeline, list of deliverables, and pricing for each option.</p>
+                </div>
+            </div>
+            <div class="process-step">
+                <img src="./assets/image/NEWSTALGIA WEB a-07.jpg" alt="Step 3">
+                <div class="process-step-content">
+                    <h2 class="step-number">03.</h2>
+                    <h3 class="step-title">AGREEMENT & ONBOARDING</h3>
+                    <p>Once you've selected your package, we'll sign the contract, complete any necessary questionnaires, and set timeline for 50% of the total project fee. I'll also provide guidance on collecting visual inspiration for your project. Once the contract is signed and the deposit are received, the project is officially booked.</p>
+                </div>
+            </div>
+            <div class="process-step reverse">
+                <img src="./assets/image/NEWSTALGIA WEB a-07.jpg" alt="Step 4">
+                <div class="process-step-content">
+                    <h2 class="step-number">04.</h2>
+                    <h3 class="step-title">FINALIZATION & HANDOVER</h3>
+                    <p>After all deliverables are approved, I'll send the final invoice for the remaining project fee. Upon payment, I'll transfer all assets in a well-organized, user-friendly folder. Your brand is now ready to launch and make a lasting impact!</p>
+                </div>
+            </div>
+        </div>
+        
+        <div id="designProcess" class="hidden">
+            <div class="process-step">
+                <img src="./assets/image/NEWSTALGIA WEB a-07.jpg" alt="Step 1: Research & Analysis">
+                <div class="process-step-content">
+                    <h2 class="step-number">04.</h2>
+                    <h3 class="step-title">FINALIZATION & HANDOVER</h3>
+                    <p>We begin with a comprehensive analysis of your brand, competitors, and target audience. This process ensures a solid foundation for design decisions.</p>
+                </div>
+            </div>
+            <div class="process-step reverse">
+                <img src="./assets/image/NEWSTALGIA WEB a-07.jpg" alt="Step 2: Design Exploration">
+                <div class="process-step-content">
+                    <h2 class="step-number">04.</h2>
+                    <h3 class="step-title">FINALIZATION & HANDOVER</h3>
+                    <p>Based on our findings, I prepare at least two distinct design directions tailored to address your specific needs. These concepts are presented as mood boards, including color palettes, typography, and more, presented in a cohesive style guide. I'll share these with you for feedback and further discussion.</p>
+                </div>
+            </div>
+            <div class="process-step">
+                <img src="./assets/image/NEWSTALGIA WEB a-07.jpg" alt="Step 3: Concept Ideation">
+                <div class="process-step-content">
+                    <h2 class="step-number">04.</h2>
+                    <h3 class="step-title">FINALIZATION & HANDOVER</h3>
+                    <p>Once a design direction is chosen, I begin developing numerous logo ideas—ranging from simple to intricate. The aim is to generate a diverse range of concepts, which we then narrow down to the most promising options.</p>
+                </div>
+            </div>
+            <div class="process-step reverse">
+                <img src="./assets/image/NEWSTALGIA WEB a-07.jpg" alt="Step 4: Refinement & Development">
+                <div class="process-step-content">
+                    <h2 class="step-number">04.</h2>
+                    <h3 class="step-title">FINALIZATION & HANDOVER</h3>
+                    <p>At this stage, I take selected sketches from the initial concept phase and refine them further. This involves adding elements like color, typography, patterns, and other details to bring your brand to life and ensure the final design meets your vision.</p>
+                </div>
+            </div>
+            <div class="process-step">
+                <img src="./assets/image/NEWSTALGIA WEB a-07.jpg" alt="Step 5: Design Presentation">
+                <div class="process-step-content">
+                    <h2 class="step-number">04.</h2>
+                    <h3 class="step-title">FINALIZATION & HANDOVER</h3>
+                    <p>With the designs finalized, I create a detailed presentation showcasing how your new brand identity will look across various applications. This includes showing specific mockups to help you visualize how the designs will perform in real-world settings.</p>
+                </div>
+            </div>
+            <div class="process-step reverse">
+                <img src="./assets/image/NEWSTALGIA WEB a-07.jpg" alt="Step 6: Final Feedback & Adjustments">
+                <div class="process-step-content">
+                    <h2 class="step-number">04.</h2>
+                    <h3 class="step-title">FINALIZATION & HANDOVER</h3>
+                    <p>After reviewing the presentation, we'll finalize any remaining adjustments and refine the designs further. Once you're fully satisfied, we finalize and deliver all the agreed-upon assets.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <button onclick="prevStep()">Back</button>
+            <img src="./assets/logo-01.png" alt="Logo" class="footer-logo">
+            <button onclick="nextStep()">Next</button>
+        </div>
+    </div>
+    
+    <script>
+function switchTab(tab) {
+        const clientProcess = document.getElementById("clientProcess");
+        const designProcess = document.getElementById("designProcess");
+        const clientTab = document.getElementById("clientTab");
+        const designTab = document.getElementById("designTab");
+
+        if (tab === "client") {
+            clientProcess.classList.remove("hidden");
+            designProcess.classList.add("hidden");
+            clientTab.classList.remove("inactive");
+            clientTab.classList.add("active");
+            designTab.classList.remove("active");
+            designTab.classList.add("inactive");
+        } else {
+            clientProcess.classList.add("hidden");
+            designProcess.classList.remove("hidden");
+            clientTab.classList.remove("active");
+            clientTab.classList.add("inactive");
+            designTab.classList.remove("inactive");
+            designTab.classList.add("active");
+        }
+    }
+
+        function prevStep() {
+            window.location.href = 'index.html';
+        }
+
+        function nextStep() {
+            // Implement next step logic here
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Literata:ital,opsz,wght@0,7..72,200..900;1,7..72,200..900&family=Oswald:wght@200..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/checkout.css">
+    <style>
+        body {
+            font-family: 'Literata', serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .qr-container {
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .qr-header {
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            max-width: 150px;
+        }
+
+        h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 36px;
+            margin: 10px 0;
+        }
+
+        .qr-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .tick {
+            width: 50px;
+            height: 50px;
+            color: green;
+            margin-bottom: 20px;
+        }
+
+        .qr-email {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .send-button {
+            background-color: black;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Literata', serif;
+        }
+
+        .qr-footer {
+            margin-top: 20px;
+        }
+
+        .qr-footer p {
+            font-size: 14px;
+        }
+
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            margin-left: -125px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 2px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            bottom: 30px;
+            font-size: 17px;
+            font-family: 'Literata', serif;
+        }
+
+        .toast.show {
+            visibility: visible;
+            -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        @-webkit-keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @-webkit-keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
+
+        @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
+    </style>
+</head>
+<body>
+    <div class="qr-container">
+        <header class="qr-header">
+            <img src="./assets/logo-01.png" alt="Logo" class="logo">
+            <h1>Order Confirmation</h1>
+        </header>
+        
+        <div class="qr-content">
+            <svg class="tick" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11.917 9.724 16.5 19 7.5"/>
+            </svg>
+            <p class="qr-email">A confirmation email has been sent to your inbox.</p>
+            <button class="send-button" onclick="window.location.href='shop.html';">Back to Shop</button>
+        </div>
+        
+        <footer class="qr-footer">
+            <p>Thank you for your purchase!</p>
+        </footer>
+    </div>
+
+    <div class="toast" id="toast">Thank you for your order!</div>
+
+    <script>
+        // Show the toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Display thank you message on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            showToast('Thank you for your order!');
+        });
+    </script>
+</body>
+</html>

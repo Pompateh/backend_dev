@@ -1,0 +1,223 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Literata", serif;
+    background-color: #f8f9fa;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Prevent scrolling */
+    position: relative;
+}
+
+/* Full height background blur effect */
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+    filter: blur(10px);
+    z-index: -1; /* Position it behind other content */
+}
+
+/* Container for the QR page */
+.qr-container {
+    width: 90%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    position: relative;
+    z-index: 1; /* Ensure it's above the blurred background */
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Flex grow the main content */
+.qr-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    text-align: center;
+    gap: 20px; /* Add space between elements */
+}
+
+/* Header section */
+.qr-header {
+    text-align: center;
+    position: relative;
+    margin-bottom: 10px;
+    margin-top: 20px;
+}
+
+.qr-header h1 {
+    font-size: 1.5rem;
+    font-family: "Literata", serif;
+}
+
+.logo {
+    width: 80%;
+    height: auto;
+    margin-bottom: 5px;
+}
+
+.qr-image {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+    
+}
+
+.qr-email, .order-details {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 2px solid black;
+    border-radius: 4px;
+    font-size: 1.7rem;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    text-align: center;
+    font-family: "Literata", serif;
+}
+
+.send-button {
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: "Literata", serif;
+    font-weight: 300;
+    margin-bottom: 20px;
+}
+
+.send-button:hover {
+    background-color: #0056b3;
+}
+
+/* Footer section */
+.qr-footer {
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 30px;
+}
+
+.qr-footer p {
+    margin: 0;
+    font-family: "Literata", serif;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 30px;
+    cursor: pointer;
+    color: #333; /* Adjust color as needed */
+    padding: 0;
+    line-height: 1;
+}
+
+/* Loading Indicator */
+.loading-indicator {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    font-size: 1.5rem;
+    border-radius: 10px;
+    text-align: center;
+    z-index: 1000; /* Ensure it's on top of other elements */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    max-width: 80%; /* Responsive width */
+    word-wrap: break-word;
+}
+
+/* Toast Notification */
+.toast {
+    visibility: hidden;
+    min-width: 250px;
+    max-width: 90%;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 4px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1001; /* Ensure it's above other elements */
+    left: 50%;
+    bottom: 10%;
+    transform: translateX(-50%);
+    font-size: 1rem;
+    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+    opacity: 0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.toast.show {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    .qr-container {
+        width: 90%;
+    }
+
+    .qr-email, .order-details {
+        width: 90%;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo {
+        width: 50%; /* Adjust logo size for small screens */
+    }
+    
+    .qr-container {
+        width: 100%;
+    }
+
+    .qr-content {
+        gap: 10px; /* Reduce gap for small screens */
+    }
+
+    .qr-email, .order-details {
+        width: 100%;
+    }
+
+    .toast {
+        bottom: 15%;
+        font-size: 0.875rem;
+        padding: 12px;
+    }
+}

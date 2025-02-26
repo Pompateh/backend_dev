@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Media Preview App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <div id="app" class="flex flex-col h-screen">
+        <!-- Navigation Bar -->
+        <nav class="flex justify-between items-center p-4 bg-white shadow-md">
+            <div class="flex items-center space-x-4">
+                <button class="p-2 hover:bg-gray-200 rounded" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div class="flex space-x-2">
+                    <button class="platform-btn active" data-platform="facebook" onclick="changePlatform('facebook')">
+                        <i class="fab fa-facebook text-blue-600"></i>
+                    </button>
+                    <button class="platform-btn" data-platform="instagram" onclick="changePlatform('instagram')">
+                        <i class="fab fa-instagram text-pink-600"></i>
+                    </button>
+                    <button class="platform-btn" data-platform="tiktok" onclick="changePlatform('tiktok')">
+                        <i class="fab fa-tiktok text-black"></i>
+                    </button>
+                </div>
+            </div>
+            <button class="bg-blue-500 text-white px-4 py-2 rounded" onclick="openPlanModal()">
+                Plan
+            </button>
+        </nav>
+
+        <!-- Main Content Area -->
+        <div class="flex flex-1">
+            <!-- Left Half - Social Media Mockup -->
+            <div class="w-1/2 p-4 bg-gray-50 overflow-y-auto" id="platform-mockup">
+                <!-- Facebook Profile View -->
+                <div id="facebook-mockup" class="bg-white rounded-lg shadow-md">
+                    <!-- Cover Photo -->
+                    <div class="relative h-48">
+                        <img src="https://via.placeholder.com/800x300" alt="Cover Photo" class="w-full h-full object-cover">
+                        <!-- Profile Picture -->
+                        <img src="https://via.placeholder.com/150" alt="Profile" 
+                             class="absolute bottom-0 left-4 transform -translate-y-1/2 w-32 h-32 rounded-full border-4 border-white object-cover">
+                    </div>
+
+                    <!-- Profile Info -->
+                    <div class="p-4 pt-16">
+                        <h2 class="text-2xl font-bold">John Doe</h2>
+                        <p class="text-gray-600">Software Engineer | Travel Enthusiast</p>
+                        <p class="mt-2">Sharing my journey, one code and adventure at a time! 🌍👨‍💻</p>
+
+                        <!-- Stories Section -->
+                        <div class="mt-4">
+                            <h3 class="text-xl font-semibold mb-2">Stories</h3>
+                            <div id="stories-container" class="flex space-x-2 overflow-x-auto">
+                                <!-- Add Story Button -->
+                                <div class="flex-shrink-0 w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center cursor-pointer">
+                                    <i class="fas fa-plus text-gray-500"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Posts Section -->
+                        <div class="mt-4" id="posts-container">
+                            <h3 class="text-xl font-semibold mb-2">Posts</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Half - Upload and Edit Area -->
+            <div class="w-1/2 p-4 bg-white">
+                <!-- File Upload Area -->
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mb-4 cursor-pointer" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-cloud-upload-alt text-4xl text-gray-500 mb-2"></i>
+                    <p>Click to upload image or video</p>
+                    <input type="file" id="fileInput" accept="image/*,video/*" class="hidden" onchange="handleFileUpload(event)">
+                </div>
+
+                <!-- Preview Area -->
+                <div id="preview-container" class="mb-4 hidden">
+                    <h3 class="text-lg font-semibold mb-2">Preview</h3>
+                    <div id="file-preview" class="w-full rounded-lg max-h-64 overflow-hidden"></div>
+                </div>
+
+                <!-- Caption Input -->
+                <div class="mb-4">
+                    <label class="block mb-2">Caption</label>
+                    <textarea id="caption-input" 
+                              class="w-full p-2 border rounded-lg" 
+                              rows="4" 
+                              placeholder="Write your caption here..."></textarea>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex space-x-4">
+                    <button class="flex-1 bg-blue-500 text-white py-2 rounded" onclick="addToStories()">
+                        Add to Stories
+                    </button>
+                    <button class="flex-1 bg-green-500 text-white py-2 rounded" onclick="addToPosts()">
+                        Add to Posts
+                    </button>
+                </div>
+                <button class="mt-4 w-full bg-red-500 text-white py-2 rounded" onclick="clearUpload()">
+                    Clear
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+      let currentPlatform = 'facebook';
+      let uploadedFile = null;
+      let uploadedFileType = null;
+  
+      function saveToStorage() {
+          try {
+              const platformData = {
+                  facebook: getDataForPlatform('facebook'),
+                  instagram: getDataForPlatform('instagram'),
+                  tiktok: getDataForPlatform('tiktok')
+              };
+              localStorage.setItem('crossPlatformProfile', JSON.stringify(platformData));
+          } catch (error) {
+              console.error('Error saving to storage:', error);
+          }
+      }
+  
+      function getDataForPlatform(platform) {
+          const data = {
+              name: document.getElementById(`profile-name-${platform}`)?.value || '',
+              bio: document.getElementById(`profile-bio-${platform}`)?.value || '',
+              description: document.getElementById(`profile-description${platform === 'facebook' ? '' : '-' + platform}`)?.value || '',
+              picture: document.getElementById(`profile-picture${platform === 'facebook' ? '' : '-' + platform}`)?.src || ''
+          };
+  
+          if (platform === 'facebook') {
+              data.stories = Array.from(document.getElementById('stories-container')?.children || [])
+                  .map(child => child.querySelector('img, video')?.src || '');
+              data.posts = Array.from(document.getElementById('posts-container')?.children || [])
+                  .map(post => ({
+                      media: post.querySelector('img, video')?.src || '',
+                      caption: post.querySelector('div:last-child')?.textContent || ''
+                  }));
+          }
+  
+          return data;
+      }
+  
+      function loadFromStorage() {
+          try {
+              const savedData = localStorage.getItem('crossPlatformProfile');
+              if (savedData) {
+                  const platformData = JSON.parse(savedData);
+                  Object.keys(platformData).forEach(platform => {
+                      setDataForPlatform(platform, platformData[platform]);
+                  });
+              }
+          } catch (error) {
+              console.error('Error loading from storage:', error);
+          }
+      }
+  
+      function setDataForPlatform(platform, data) {
+          document.getElementById(`profile-name-${platform}`)?.setAttribute('value', data.name);
+          document.getElementById(`profile-bio-${platform}`)?.setAttribute('value', data.bio);
+          document.getElementById(`profile-description${platform === 'facebook' ? '' : '-' + platform}`)?.setAttribute('value', data.description);
+          document.getElementById(`profile-picture${platform === 'facebook' ? '' : '-' + platform}`)?.setAttribute('src', data.picture);
+  
+          if (platform === 'facebook') {
+              setFacebookContent(data);
+          }
+      }
+  
+      function setFacebookContent(data) {
+          const storiesContainer = document.getElementById('stories-container');
+          const postsContainer = document.getElementById('posts-container');
+  
+          storiesContainer.innerHTML = '';
+          postsContainer.innerHTML = '';
+  
+          data.stories.forEach(storySrc => {
+              const storyElement = createStoryElement(storySrc);
+              storiesContainer.appendChild(storyElement);
+          });
+  
+          data.posts.forEach(post => {
+              const postElement = createPostElement(post);
+              postsContainer.appendChild(postElement);
+          });
+      }
+  
+      function createStoryElement(storySrc) {
+          const storyElement = document.createElement('div');
+          storyElement.className = 'flex-shrink-0 w-20 h-20 rounded-full border-2 border-blue-500 p-1';
+          const mediaElement = document.createElement(storySrc.includes('video') ? 'video' : 'img');
+          mediaElement.src = storySrc;
+          mediaElement.className = 'w-full h-full rounded-full object-cover';
+          if (mediaElement.tagName === 'VIDEO') mediaElement.controls = true;
+          storyElement.appendChild(mediaElement);
+          return storyElement;
+      }
+  
+      function createPostElement(post) {
+          const postElement = document.createElement('div');
+          postElement.className = 'bg-gray-100 rounded-lg mb-4 overflow-hidden';
+          const mediaElement = document.createElement(post.media.includes('video') ? 'video' : 'img');
+          mediaElement.src = post.media;
+          mediaElement.className = 'w-full h-64 object-cover';
+          if (mediaElement.tagName === 'VIDEO') mediaElement.controls = true;
+          postElement.appendChild(mediaElement);
+  
+          if (post.caption) {
+              const captionElement = document.createElement('div');
+              captionElement.className = 'p-3';
+              captionElement.textContent = post.caption;
+              postElement.appendChild(captionElement);
+          }
+  
+          return postElement;
+      }
+  
+      function changePlatform(platform) {
+          saveToStorage();
+          currentPlatform = platform;
+          updatePlatformView();
+          loadFromStorage();
+      }
+  
+      function updatePlatformView() {
+          document.querySelectorAll('.platform-btn').forEach(btn => {
+              btn.classList.remove('active', 'bg-blue-100');
+          });
+          document.querySelector(`[data-platform="${currentPlatform}"]`)?.classList.add('active', 'bg-blue-100');
+  
+          document.querySelectorAll('.platform-specific').forEach(elem => {
+              elem.style.display = elem.id.includes(currentPlatform) ? 'block' : 'none';
+          });
+  
+          setupProfilePictureListeners();
+      }
+  
+      function setupProfilePictureListeners() {
+          const profilePictureUpload = document.getElementById('profile-picture-upload');
+          if (profilePictureUpload) {
+              profilePictureUpload.removeEventListener('change', updateProfilePicture);
+              profilePictureUpload.addEventListener('change', updateProfilePicture);
+          }
+  
+          const profilePictures = [
+              document.getElementById('profile-picture'),
+              document.getElementById('profile-picture-instagram'),
+              document.getElementById('profile-picture-tiktok')
+          ];
+  
+          profilePictures.forEach(pic => {
+              if (pic) {
+                  pic.onclick = () => document.getElementById('profile-picture-upload').click();
+              }
+          });
+      }
+  
+      function updateProfilePicture(event) {
+          const file = event.target.files[0];
+          if (file) {
+              const reader = new FileReader();
+              reader.onload = function(e) {
+                  const profilePicture = document.getElementById(`profile-picture${currentPlatform === 'facebook' ? '' : '-' + currentPlatform}`);
+                  if (profilePicture) {
+                      profilePicture.src = e.target.result;
+                      saveToStorage();
+                  }
+              };
+              reader.readAsDataURL(file);
+          }
+      }
+  
+      function setupChangeListeners() {
+          const inputs = document.querySelectorAll('input, textarea');
+          inputs.forEach(input => {
+              input.addEventListener('input', saveToStorage);
+          });
+      }
+  
+      function handleFileUpload(event) {
+          const file = event.target.files[0];
+          if (file) {
+              const reader = new FileReader();
+              reader.onload = function (e) {
+                  const previewContainer = document.getElementById('preview-container');
+                  const filePreview = document.getElementById('file-preview');
+  
+                  filePreview.innerHTML = '';
+                  if (file.type.startsWith('image/')) {
+                      const img = document.createElement('img');
+                      img.src = e.target.result;
+                      img.className = 'w-full h-full object-cover';
+                      filePreview.appendChild(img);
+                      uploadedFileType = 'image';
+                  } else if (file.type.startsWith('video/')) {
+                      const video = document.createElement('video');
+                      video.src = e.target.result;
+                      video.className = 'w-full h-full object-cover';
+                      video.controls = true;
+                      filePreview.appendChild(video);
+                      uploadedFileType = 'video';
+                  }
+  
+                  previewContainer.classList.remove('hidden');
+                  uploadedFile = e.target.result;
+              };
+              reader.readAsDataURL(file);
+          }
+      }
+  
+      function addToStories() {
+          if (!uploadedFile) return;
+  
+          const storiesContainer = document.getElementById('stories-container');
+          const storyElement = createStoryElement(uploadedFile);
+          storiesContainer.appendChild(storyElement);
+  
+          clearUpload();
+          saveToStorage();
+      }
+  
+      function addToPosts() {
+          if (!uploadedFile) return;
+  
+          const postsContainer = document.getElementById('posts-container');
+          const captionInput = document.getElementById('caption-input');
+          const post = {
+              media: uploadedFile,
+              caption: captionInput.value
+          };
+          const postElement = createPostElement(post);
+          postsContainer.appendChild(postElement);
+  
+          clearUpload();
+          saveToStorage();
+      }
+  
+      function clearUpload() {
+          document.getElementById('fileInput').value = '';
+          document.getElementById('preview-container').classList.add('hidden');
+          document.getElementById('file-preview').innerHTML = '';
+          document.getElementById('caption-input').value = '';
+          uploadedFile = null;
+          uploadedFileType = null;
+      }
+
+      
+  
+      // Initialize everything when the DOM is fully loaded
+      document.addEventListener('DOMContentLoaded', () => {
+          updatePlatformView();
+          setupChangeListeners();
+          loadFromStorage();
+      });
+  
+      // Save data when the user leaves the page
+      window.addEventListener('beforeunload', saveToStorage);
+  </script>
+  
+</body>
+</html>

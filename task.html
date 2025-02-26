@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Newstalgia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Literata:ital,opsz,wght@0,7..72,200..900;1,7..72,200..900&family=Oswald:wght@200..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/task.css">
+</head>
+<body>
+    <div class="container">
+        <div class="page-width header_demo">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="./assets/logo-01.png" alt="Logo">
+                </a>
+            </div>
+            <div class="hamburger">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
+            <nav class="nav-bar">
+                <ul>
+                    <li><a href="Typeface.html"><span>Task</span></a></li>
+                    <li><a href="Brand.html"><span>Timeline</span></a></li>
+                    <li><a href="#"><span>Contract</span></a></li>
+                    <li><a href="shop.html"><span>Quotation</span></a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="body_container">
+            <div class="marquee">
+                <div class="track">
+                    <div class="marquee_content">&nbsp;You have no time! You have no time! You have no time! You have no time! You have no time! You have no time!</div>
+                </div>
+            </div>
+            <div id="task-container">
+                <div id="no-task">No task available</div>
+            </div>
+            <div id="task-popup" class="hidden">
+                <div id="task-form">
+                    <button id="close-task-btn" class="close-btn">&times;</button>
+                    <h2>Create a Task</h2>
+                    <label for="task-name">Job Name:</label> 
+                    <input type="text" id="task-name">
+                    <label for="task-desc">Description:</label>
+                    <textarea id="task-desc"></textarea>
+                    <label for="task-date">Due Date:</label>
+                    <input type="date" id="task-date">
+                    <label for="project-type">Project Type:</label>
+                    <input type="text" id="project-type">
+                    <button id="save-task-btn">Save</button>
+                </div>
+            </div>
+            <button id="create-task-btn">Create Task</button>
+        </div>
+    </div>
+
+    <script>
+const taskContainer = document.getElementById('task-container');
+const noTaskMessage = document.getElementById('no-task');
+
+// Load all tasks when the page loads
+document.addEventListener('DOMContentLoaded', loadTasks);
+
+// Task click event: navigate to job_detail.html
+document.querySelectorAll('.task-box').forEach(taskBox => {
+    taskBox.addEventListener('click', function () {
+        const taskId = taskBox.dataset.taskId;  // Correct dataset access
+        navigateToTaskBox(taskId);
+    });
+});
+
+// Open task creation popup
+document.getElementById('create-task-btn').addEventListener('click', function () {
+    document.getElementById('task-popup').classList.remove('hidden');
+});
+
+// Close task creation popup
+document.getElementById('close-task-btn').addEventListener('click', function () {
+    document.getElementById('task-popup').classList.add('hidden');
+});
+
+const saveTaskBtn = document.getElementById('save-task-btn');
+if (saveTaskBtn) {
+    saveTaskBtn.addEventListener('click', () => {
+        const taskName = document.getElementById('task-name').value.trim();
+        const taskDesc = document.getElementById('task-desc').value.trim();
+        const taskDate = document.getElementById('task-date').value.trim();
+        const taskType = document.getElementById('project-type').value.trim();
+
+        if (taskName && taskDesc && taskDate && taskType) {
+            const taskId = new Date().getTime().toString();
+            const task = {
+                id: taskId,
+                name: taskName,
+                description: taskDesc,  // Ensure 'description' is used correctly
+                date: taskDate,
+                type: taskType,
+            };
+
+            // Save the new task to localStorage
+            const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            tasks.push(task);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+
+            const taskBox = createTaskBox(task);
+            taskContainer.appendChild(taskBox);
+            document.getElementById('task-popup').classList.add('hidden');
+            noTaskMessage.style.display = 'none';
+
+            checkNoTasks();
+        } else {
+            alert("Please fill in all fields before saving the task.");
+        }
+    });
+}
+
+function createTaskBox(task) {
+    const taskBox = document.createElement('div');
+    taskBox.className = 'task-box';
+    taskBox.dataset.taskId = task.id;
+
+    taskBox.innerHTML = `
+        <h2>${task.type || 'No Type'}</h2>
+        <h1>${task.name || 'No Name'}</h1>
+        <button class="delete-btn"></button>
+        <p>${task.description || 'No Description'}</p>  <!-- Correct property 'description' -->
+        <h3 class="task-date">Due: ${task.date || 'No Date'}</h3>
+    `;
+
+    // Add event listener for delete button
+    const deleteBtn = taskBox.querySelector('.delete-btn');
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            taskBox.remove();
+            deleteTaskFromStorage(task.id);
+            checkNoTasks();
+        });
+    }
+
+    // Add event listener for task box click
+    taskBox.addEventListener('click', function () {
+        navigateToTaskBox(task.id);
+    });
+
+    return taskBox;
+}
+
+function deleteTaskFromStorage(taskId) {
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    tasks = tasks.filter(task => task.id !== taskId);
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+function saveTasks() {
+    const tasks = Array.from(document.getElementsByClassName('task-box')).map(taskBox => {
+        return {
+            id: taskBox.dataset.taskId,  // Save taskId
+            type: taskBox.querySelector('h2').textContent,
+            name: taskBox.querySelector('h1').textContent,
+            description: taskBox.querySelector('p').textContent,
+            date: taskBox.querySelector('.task-date').textContent.replace('Due: ', '')
+        };
+    });
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+// Load tasks from localStorage
+function loadTasks() {
+    const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+    tasks.forEach(task => {
+        if (task.name && task.date && task.type) {
+            const taskBox = createTaskBox(task);
+            taskContainer.appendChild(taskBox);
+        }
+    });
+
+    checkNoTasks();
+}
+
+// Check if there are no tasks, display message if needed
+function checkNoTasks() {
+    noTaskMessage.style.display = taskContainer.children.length > 0 ? 'none' : 'block';
+}
+
+// Navigate to job_detail.html with the selected task ID
+function navigateToTaskBox(taskId) {
+    console.log(`Navigating to job_detail.html with taskId: ${taskId}`);
+    taskId = taskId.toString();  // Ensure taskId is a string
+    localStorage.setItem('currentTaskId', taskId);
+    window.location.href = `job_detail.html?taskId=${taskId}`;
+}
+
+    </script>
+</body>
+</html>

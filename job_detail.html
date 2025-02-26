@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Newstalgia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Literata:ital,opsz,wght@0,7..72,200..900;1,7..72,200..900&family=Oswald:wght@200..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/job_detail.css">
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.css' rel='stylesheet' />
+
+</head>
+<style>
+    .flip-card {
+    background-color: transparent;
+    width: 100%;
+    height: 100%;
+    perspective: 1000px;
+}
+
+.flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.flip-card-inner.is-flipped {
+    transform: rotateY(180deg);
+}
+
+.flip-card-front, .flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+.flip-card-front {
+    background-color: #bbb;
+    color: black;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #f8f8f8;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    font-family: 'Oswald', sans-serif;
+    color: #000000;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal h2 {
+    margin-top: 0;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+}
+
+.modal input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    font-family: 'Oswald', sans-serif;
+}
+
+.modal-buttons {
+    text-align: right;
+    margin-top: 20px;
+}
+
+.modal-buttons button {
+    padding: 10px 20px;
+    margin-left: 10px;
+    border: none;
+    background-color: #000000;
+    color: #f8f8f8;
+    cursor: pointer;
+    font-family: 'Oswald', sans-serif;
+    transition: background-color 0.3s;
+}
+
+.modal-buttons button:hover {
+    background-color: #333;
+}
+
+/* Calendar enhancements */
+.calendar-day {
+    position: relative;
+    cursor: pointer;
+}
+
+.calendar-day.has-task {
+    background-color: #e0e0e0;
+}
+
+.calendar-day.has-task:hover .delete-task {
+    display: block;
+}
+
+.delete-task {
+    display: none;
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    text-align: center;
+    background-color: #ff0000;
+    color: #ffffff;
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.fc-daygrid-event {
+        background-color: transparent !important;
+        border: none !important;
+    }
+
+    .fc-event-main.task-done,
+    .fc-daygrid-event .fc-event-main.task-done {
+        background-color: #4CAF50 !important;
+        border-color: #4CAF50 !important;
+        color: white !important;
+    }
+
+    .fc-event-main.task-selected,
+    .fc-daygrid-event .fc-event-main.task-selected {
+        background-color: #9E9E9E !important;
+        border-color: #9E9E9E !important;
+        color: white !important;
+    }
+
+    .fc-event-main.task-default,
+    .fc-daygrid-event .fc-event-main.task-default {
+        background-color: #2196F3 !important;
+        border-color: #2196F3 !important;
+        color: white !important;
+    }
+
+    /* Ensure the event content is visible */
+    .fc-event-main {
+        padding: 2px 4px !important;
+        margin: 1px 0 !important;
+    }
+
+    .fc-daygrid-event {
+    height: 100%;
+}
+
+.fc-daygrid-day-events {
+    height: 100%;
+}
+
+.fc-daygrid-event-harness {
+    height: 100%;
+}
+
+.fc-daygrid-day.fc-day-selected {
+        background-color: #E0E0E0 !important;
+    }
+
+    .fc-daygrid-day.fc-day-done {
+        background-color: #4CAF50 !important;
+    }
+
+    .fc-event-title {
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .fc-event-time {
+        display: none;
+    }
+
+    .fc-daygrid-event {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+    .fc-daygrid-event-harness {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+</style>
+<body>
+    <div class="container">
+        <div class="page-width header_demo">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="./assets/logo-01.png" alt="Logo">
+                </a>
+            </div>
+            <div class="hamburger">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
+            <nav class="nav-bar">
+                <ul>
+                    <li>
+                        <a href="AvailableJob.html">
+                            <span>Task</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="Brand.html">
+                            <span>Timeline</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span>Contract</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="shop.html">
+                            <span>Quotation</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="task-container">
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <div class="task-details">
+                            <div class="job-name">
+                                <span id="task-name-front"></span>
+                            </div>
+                            <div class="job-completion">
+                                Completion: <span id="completionPercentage">0%</span>
+                            </div>
+                            <div class="due-date">
+                                Due Date: <span id="due-date-front"></span>
+                            </div>
+                        </div>
+                        <div class="project-image">
+                            <img src="./assets/image/NEWSTALGIA WEB-01.png" alt="Project Image">
+                        </div>
+                    </div>
+                    <div class="flip-card-back">
+                        <div class="task-details">
+                            <div class="job-name">
+                                <span id="task-name-back"></span>
+                            </div>
+                            <div class="job-completion">
+                                Completion: <span id="completionPercentageBack">0%</span>
+                            </div>
+                            <div class="due-date">
+                                Due Date: <span id="due-date-back"></span>
+                            </div>
+                        </div>
+                        <div id="calendar" class="calendar-container"></div>
+                    </div>
+                    <input type="hidden" id="taskIndex" value="">
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div id="calendar"></div>
+            <div id="taskModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Task for <span id="modal-date"></span></h2>
+                    <input type="text" id="taskDescription" placeholder="Task Description">
+                    <input type="text" id="responsiblePerson" placeholder="Responsible Person">
+                    <div class="modal-buttons">
+                        <button id="addTask">Add Task</button>
+                        <button id="markAsDone">Mark as Done</button>
+                        <button id="deleteTask">Delete Task</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+let selectedDate = new Date();
+let currentTaskId;
+let currentTasks = {};
+let calendar;
+
+document.addEventListener('DOMContentLoaded', () => {
+    currentTaskId = getTaskIdFromUrl();
+    if (currentTaskId) {
+        loadTaskDetails(currentTaskId);
+        currentTasks = JSON.parse(localStorage.getItem(`tasks_${currentTaskId}`)) || {};
+        
+        const flipCard = document.querySelector('.flip-card');
+        if (flipCard) {
+            flipCard.addEventListener('click', function(event) {
+                if (!event.target.closest('#calendar')) {
+                    this.querySelector('.flip-card-inner').classList.toggle('is-flipped');
+                }
+            });
+        }
+
+        initializeCalendar();
+    } else {
+        console.error('Task ID not found');
+    }
+
+    // Modal event listeners
+    const modal = document.getElementById('taskModal');
+    const closeBtn = modal.querySelector('.close');
+    const addTaskBtn = document.getElementById('addTask');
+    const markAsDoneBtn = document.getElementById('markAsDone');
+    const deleteTaskBtn = document.getElementById('deleteTask');
+
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (addTaskBtn) addTaskBtn.addEventListener('click', addOrUpdateTask);
+    if (markAsDoneBtn) markAsDoneBtn.addEventListener('click', markTaskAsDone);
+    if (deleteTaskBtn) deleteTaskBtn.addEventListener('click', deleteTask);
+
+    initializeCompletion();
+});
+
+function initializeCalendar() {
+    const calendarEl = document.getElementById('calendar');
+    calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        events: getEvents(),
+        eventClick: function(info) {
+            info.jsEvent.preventDefault(); // prevent navigation
+            openModal(info.event.start, true);
+        },
+        dateClick: function(info) {
+    // Convert the clicked date to a Date object at midnight
+    const clickedDate = new Date(info.date);
+    
+    // Adjust for timezone issues by setting to midnight
+    clickedDate.setHours(0, 0, 0, 0);
+    
+    // Get the date key in the correct format
+    const dateKey = info.dateStr;
+    const existingTask = currentTasks[dateKey];
+    
+    // Open modal with the precise clicked date
+    openModal(clickedDate, existingTask !== undefined);
+},
+        eventContent: function(arg) {
+            let backgroundColor = arg.event.extendedProps.done ? '#4CAF50' : 
+                                  (arg.event.extendedProps.selected ? '#E0E0E0' : '#2196F3');
+            return {
+                html: `<div class="fc-event-main" style="background-color: ${backgroundColor}; color: white; padding: 2px 4px; margin: 1px 0;">
+                         <div class="fc-event-title">${arg.event.title}</div>
+                         <div class="fc-event-description">${arg.event.extendedProps.responsible || ''}</div>
+                       </div>`
+            };
+        },
+        eventDidMount: function(info) {
+            info.el.style.height = '100%';
+        }
+    });
+
+    calendar.render();
+}
+
+function getEvents() {
+    return Object.entries(currentTasks).map(([date, task]) => ({
+        title: task.description,
+        start: date,
+        extendedProps: {
+            responsible: task.responsible,
+            done: task.done,
+            selected: task.selected
+        }
+    }));
+}
+
+function getTaskIdFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('taskId');
+}
+
+function loadTaskDetails(taskId) {
+    const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    const task = tasks.find(t => t.id === taskId);
+
+    if (task) {
+        document.getElementById('task-name-front').textContent = task.name || 'No Name';
+        document.getElementById('due-date-front').textContent = task.date || 'No Date';
+
+        document.getElementById('task-name-back').textContent = task.name || 'No Name';
+        document.getElementById('due-date-back').textContent = task.date || 'No Date';
+
+        if (task.date) {
+            selectedDate = new Date(task.date);
+        }
+    } else {
+        console.error('Task not found');
+    }
+}
+function loadCalendarForTask(taskId) {
+    const calendarEl = document.getElementById('calendar');
+    if (calendarEl) {
+        if (calendarEl.fullCalendar) {
+            calendarEl.fullCalendar.destroy();
+        }
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            selectable: true,
+            select: function(info) {
+                selectedDate = info.start;
+                openModal(selectedDate);
+            },
+            eventClick: function(info) {
+                selectedDate = info.event.start;
+                openModal(selectedDate, true);
+            },
+            events: getEventsForTask(taskId),
+            eventContent: function(arg) {
+                let colorClass = 'task-default';
+                if (arg.event.extendedProps.done) {
+                    colorClass = 'task-done';
+                } else if (arg.event.extendedProps.selected) {
+                    colorClass = 'task-selected';
+                }
+                return {
+                    html: `<div class="fc-event-main ${colorClass}">${arg.event.title}</div>`
+                };
+            }
+        });
+        calendar.render();
+        calendarEl.fullCalendar = calendar;
+    }
+}
+
+function getEventsForTask(taskId) {
+    const tasks = JSON.parse(localStorage.getItem(`tasks_${taskId}`)) || {};
+    return Object.entries(tasks).map(([date, task]) => ({
+        title: task.description,
+        start: date,
+        allDay: true,
+        extendedProps: {
+            done: task.done,
+            selected: task.selected
+        }
+    }));
+}
+
+function updateCalendar() {
+    calendar.removeAllEvents();
+    calendar.addEventSource(getEvents());
+}
+
+function navigateMonth(direction) {
+    selectedDate.setMonth(selectedDate.getMonth() + direction);
+    updateCalendar();
+    document.getElementById('currentMonth').textContent = `${monthNames[selectedDate.getMonth()]} ${selectedDate.getFullYear()}`;
+}
+
+function openModal(date, isExistingTask = false) {
+    // Ensure we're working with a Date object
+    selectedDate = date instanceof Date ? date : new Date(date);
+    
+    // Adjust for timezone offset
+    const adjustedDate = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000);
+    
+    const modal = document.getElementById('taskModal');
+    const modalDate = document.getElementById('modal-date');
+    const taskDescription = document.getElementById('taskDescription');
+    const responsiblePerson = document.getElementById('responsiblePerson');
+    const addUpdateTaskBtn = document.getElementById('addTask');
+
+    // Set the modal date display
+    modalDate.textContent = adjustedDate.toDateString();
+
+    // Use the adjusted date for the dateKey
+    const dateKey = adjustedDate.toISOString().split('T')[0];
+    const existingTask = currentTasks[dateKey];
+
+    if (existingTask) {
+        taskDescription.value = existingTask.description || '';
+        responsiblePerson.value = existingTask.responsible || '';
+        document.getElementById('markAsDone').style.display = 'inline-block';
+        document.getElementById('deleteTask').style.display = 'inline-block';
+        addUpdateTaskBtn.textContent = 'Update Task';
+    } else {
+        taskDescription.value = '';
+        responsiblePerson.value = '';
+        document.getElementById('markAsDone').style.display = 'none';
+        document.getElementById('deleteTask').style.display = 'none';
+        addUpdateTaskBtn.textContent = 'Add Task';
+    }
+
+    modal.style.display = 'block';
+}
+function displayTaskDetails(dateString) {
+    const taskList = document.getElementById('taskList');
+    taskList.innerHTML = '';
+
+    if (currentTasks[dateString] && Array.isArray(currentTasks[dateString])) {
+        currentTasks[dateString].forEach((task, index) => {
+            const li = document.createElement('li');
+            li.textContent = `${task.description} - ${task.responsible} ${task.done ? '(Done)' : ''}`;
+            li.addEventListener('click', () => openModal(dateString, index));
+            taskList.appendChild(li);
+        });
+    }
+}
+
+function closeModal() {
+    document.getElementById('taskModal').style.display = 'none';
+}
+
+function addOrUpdateTask() {
+    const adjustedDate = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000);
+    const dateKey = adjustedDate.toISOString().split('T')[0];
+    const description = document.getElementById('taskDescription').value;
+    const responsible = document.getElementById('responsiblePerson').value;
+
+    currentTasks[dateKey] = {
+        description: description,
+        responsible: responsible,
+        done: currentTasks[dateKey] ? currentTasks[dateKey].done : false,
+        selected: true
+    };
+
+    saveTasksToLocalStorage();
+    updateCalendar();
+    calculateCompletion();
+    closeModal();
+}
+function markTaskAsDone() {
+    const adjustedDate = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000);
+    const dateKey = adjustedDate.toISOString().split('T')[0];
+    if (currentTasks[dateKey]) {
+        currentTasks[dateKey].done = true;
+        saveTasksToLocalStorage();
+        updateCalendar();
+        calculateCompletion();
+    }
+    closeModal();
+}
+
+function calculateCompletion() {
+    let totalTasks = 0;
+    let completedTasks = 0;
+
+    for (const dateString in currentTasks) {
+        if (currentTasks[dateString].selected) {
+            totalTasks++;
+            if (currentTasks[dateString].done) {
+                completedTasks++;
+            }
+        }
+    }
+
+    const completionPercentage = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+    const completionElement = document.getElementById('completionPercentage');
+    const completionElementBack = document.getElementById('completionPercentageBack');
+    
+    if (completionElement) {
+        completionElement.textContent = `${Math.round(completionPercentage)}%`;
+    }
+    if (completionElementBack) {
+        completionElementBack.textContent = `${Math.round(completionPercentage)}%`;
+    }
+
+    localStorage.setItem(`completion_${currentTaskId}`, Math.round(completionPercentage));
+}
+
+function initializeCompletion() {
+    const savedCompletion = localStorage.getItem(`completion_${currentTaskId}`);
+    const completionElement = document.getElementById('completion-percentage');
+    if (completionElement && savedCompletion) {
+        completionElement.textContent = `${savedCompletion}%`;
+    } else {
+        calculateCompletion();
+    }
+}
+
+
+    function getTaskForDate(date) {
+        const tasks = JSON.parse(localStorage.getItem(`tasks_${currentTaskId}`)) || [];
+        return tasks.find(task => new Date(task.date).toDateString() === date.toDateString());
+    }
+
+    function deleteTask() {
+    const adjustedDate = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000);
+    const dateKey = adjustedDate.toISOString().split('T')[0];
+    if (currentTasks[dateKey]) {
+        delete currentTasks[dateKey];
+        saveTasksToLocalStorage();
+        updateCalendar();
+        calculateCompletion();
+    }
+    closeModal();
+}
+
+function saveTasksToLocalStorage() {
+    localStorage.setItem(`tasks_${currentTaskId}`, JSON.stringify(currentTasks));
+}
+    document.getElementById('markAsDone').addEventListener('click', markTaskAsDone);
+    document.getElementById('deleteTask').addEventListener('click', deleteTask);
+
+    document.getElementById('prevMonth').addEventListener('click', (event) => {
+        event.stopPropagation();
+        navigateMonth(-1);
+    });
+
+    document.getElementById('nextMonth').addEventListener('click', (event) => {
+        event.stopPropagation();
+        navigateMonth(1);
+    });
+
+    // Add event listeners for card flipping only on specific areas
+    document.querySelector('.flip-card-front .task-details').addEventListener('click', function(event) {
+        if (event.target === this || event.target.parentNode === this) {
+            document.querySelector('.flip-card').classList.add('flipped');
+        }
+    });
+
+    document.querySelector('.flip-card-back .task-details').addEventListener('click', function(event) {
+        if (event.target === this || event.target.parentNode === this) {
+            document.querySelector('.flip-card').classList.remove('flipped');
+        }
+    });
+
+    // Prevent flipping when interacting with the calendar
+    document.querySelector('.calendar-container').addEventListener('click', (event) => {
+        event.stopPropagation();
+    });
+
+    document.querySelector('.flip-card').addEventListener('click', function() {
+    this.classList.toggle('flipped');
+});
+function toggleDateSelection(date) {
+    const dateKey = date.toISOString().split('T')[0];
+    if (currentTasks[dateKey]) {
+        currentTasks[dateKey].selected = !currentTasks[dateKey].selected;
+    } else {
+        currentTasks[dateKey] = {
+            description: '',
+            responsible: '',
+            done: false,
+            selected: true
+        };
+    }
+    saveTasksToLocalStorage();
+    updateCalendar();
+}
+
+    </script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.js'></script>
+</body>
+
+</html>

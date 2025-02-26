@@ -1,0 +1,24 @@
+.toast {
+    visibility: hidden;
+    min-width: 250px;
+    max-width: 90%;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 4px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1001; /* Ensure it's above other elements */
+    left: 50%;
+    bottom: 10%;
+    transform: translateX(-50%);
+    font-size: 1rem;
+    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+    opacity: 0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.toast.show {
+    visibility: visible;
+    opacity: 1;
+}
