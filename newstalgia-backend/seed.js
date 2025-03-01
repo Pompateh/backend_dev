@@ -16,7 +16,7 @@ const typefacesData = require(path.join(__dirname, "data", "typeface.json"));
 
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/newstalgia_db", {
+mongoose.connect(process.env.MONGO_URI || "mongodb+srv://heetranwork:31122000h@cluster0.x8whi.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });

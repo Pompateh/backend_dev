@@ -8,7 +8,7 @@ const IllustrationSchema = new mongoose.Schema({
   image2: { type: String, required: true },
   image3: { type: String, required: true },
   story: { type: String },
-  artists: { type: String },
+  artist: { type: String },
   year: { type: String, required: true },
   style: { type: String }
 });
