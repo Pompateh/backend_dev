@@ -21,15 +21,15 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Create the upload endpoint
-app.post('/api/upload', upload.single('image'), (req, res) => {
+app.post("/api/upload", upload.single("image"), (req, res) => {
   try {
-    // Construct the URL to access the uploaded file
-    const filePath = `http://localhost:${PORT}/uploads/${req.file.filename}`;
-    res.json({ filePath });
+    // Construct the URL for the uploaded file
+    // Adjust the hostname/port as needed
+    const filePath = `http://localhost:5000/uploads/${req.file.filename}`;
+    return res.json({ filePath });
   } catch (error) {
     console.error("Upload error:", error);
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 });
 

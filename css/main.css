@@ -8,6 +8,12 @@
 
 }
 
+#brand-detail {
+    display: block !important;
+  }
+
+  
+
 .page-width {
     padding: 0 20px;
 }

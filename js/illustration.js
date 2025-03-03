@@ -1,10 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM fully loaded and parsed');
-    const cards = document.querySelectorAll('.card');
-    console.log('Number of cards found:', cards.length);
+    const illustrationListContainer = document.getElementById('illustration-list');
+
+    let illustrations = [];
 
     // Fetch the illustration data
-    fetch('./data/illustrations.json')
+    fetch('../data/illustrations.json')  // Adjusted path to match the correct location
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -12,30 +12,46 @@ document.addEventListener('DOMContentLoaded', () => {
             return response.json();
         })
         .then(illustrationsData => {
-            console.log('Illustrations data loaded:', illustrationsData);
-            if (!Array.isArray(illustrationsData) || illustrationsData.length === 0) {
-                throw new Error('Invalid or empty illustrations data');
-            }
-            cards.forEach((card, index) => {
-                const illustrationId = card.dataset.id || (index + 1).toString();
-                console.log(`Setting up click event for card ${index + 1}, illustrationId: ${illustrationId}`);
-                card.addEventListener('click', () => {
-                    console.log('Card clicked, illustrationId:', illustrationId);
-                    const illustrationData = illustrationsData.find(illustration => illustration.id.toString() === illustrationId);
-                    
-                    if (illustrationData) {
-                        console.log('Illustration data found:', illustrationData);
-                        localStorage.setItem('currentIllustration', JSON.stringify(illustrationData));
-                        window.location.href = 'illustration-detail.html';
-                    } else {
-                        console.error('Illustration data not found for id:', illustrationId);
-                        alert(`No data found for illustration ${illustrationId}`);
-                    }
-                });
-            });
+            console.log('Illustrations data loaded:', illustrationsData);  // Log the loaded data
+            illustrations = illustrationsData;
+            renderIllustrationList();
         })
         .catch(error => {
-            console.error('Error:', error);
-            alert('Failed to load illustration data. Please check the console for more details.');
+            console.error('Error loading Illustration data:', error);
+            // Display error message to user
+            alert('Failed to load Illustration data. Please try again later.');
         });
+
+    function renderIllustrationList() {
+        illustrationListContainer.innerHTML = '';
+        illustrations.forEach(illustration => {
+            const card = document.createElement('div');
+            card.classList.add('card');
+            card.dataset.id = illustration.id;
+            card.innerHTML = `
+                <div class="card-image" style="background-image: url('${illustration.image}');"></div>
+                <div class="card-content">
+                    <h1>${illustration.name}</h1>
+                </div>
+            `;
+            card.addEventListener('click', () => showIllustrationDetail(illustration.id));
+            illustrationListContainer.appendChild(card);
+        });
+    }
+
+    function showIllustrationDetail(illustrationId) {
+        console.log('Card clicked, illustrationId:', illustrationId);
+        const illustrationData = illustrations.find(illustration => illustration.id === illustrationId);
+        
+        if (illustrationData) {
+            console.log('Illustration data found:', illustrationData);
+            // Store the illustration details in localStorage
+            localStorage.setItem('currentIllustration', JSON.stringify(illustrationData));
+
+            // Navigate to the illustration detail page
+            window.location.href = 'illustration-detail.html';
+        } else {
+            console.error('Illustration data not found for id:', illustrationId);
+        }
+    }
 });

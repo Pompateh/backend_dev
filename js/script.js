@@ -20,23 +20,24 @@ closeCart.addEventListener('click', () => {
 
 // Function to render product list
 const addDatatoHTML = () => {
-    listProductHTML.innerHTML = '';
+    listProductHTML.innerHTML = '';  // Clear any static content
     if (listProducts.length > 0) {
         listProducts.forEach(product => {
             let newProduct = document.createElement('div');
             newProduct.classList.add('item');
             newProduct.dataset.id = product.id;
             newProduct.innerHTML = `
-                <div class="price-tag">${product.price}$</div>
-                <img src="${product.image}" alt="${product.name}">
-                <h2>${product.name}</h2>
-                <p>${product.type}</p>
+            <div class="price-tag">${product.price}$</div>
+            <img src="${product.image}" alt="${product.name}">
+            <h2>${product.name}</h2>
+            <p>${product.type}</p>
+                </div>
             `;
             newProduct.addEventListener('click', () => showProductDetail(product.id));
             listProductHTML.appendChild(newProduct);
         });
     }
-}
+};
 
 // Function to show product detail
 const showProductDetail = (productId) => {

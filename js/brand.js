@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const cards = document.querySelectorAll('.card');
+    const brandListContainer = document.getElementById('brand-list');
+
+    let brands = [];
 
     // Fetch the brand data
     fetch('./data/brands.json')  // Adjust this path if needed
@@ -11,29 +13,45 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(brandsData => {
             console.log('Brands data loaded:', brandsData);  // Log the loaded data
-            cards.forEach((card, index) => {
-                // Use index + 1 as id if data-id is not set
-                const brandId = card.dataset.id || (index + 1).toString();
-                card.addEventListener('click', () => {
-                    console.log('Card clicked, brandId:', brandId);  // Log the click event
-                    const brandData = brandsData.find(brand => brand.id === brandId);
-                    
-                    if (brandData) {
-                        console.log('Brand data found:', brandData);  // Log the found brand data
-                        // Store the brand details in localStorage
-                        localStorage.setItem('currentBrand', JSON.stringify(brandData));
-
-                        // Navigate to the brand detail page
-                        window.location.href = 'brand-detail.html';
-                    } else {
-                        console.error('Brand data not found for id:', brandId);
-                    }
-                });
-            });
+            brands = brandsData;
+            renderBrandList();
         })
         .catch(error => {
             console.error('Error loading brand data:', error);
             // Display error message to user
             alert('Failed to load brand data. Please try again later.');
         });
+
+    function renderBrandList() {
+        brandListContainer.innerHTML = '';
+        brands.forEach(brand => {
+            const card = document.createElement('div');
+            card.classList.add('card');
+            card.dataset.id = brand.id;
+            card.innerHTML = `
+                <div class="card-image" style="background-image: url('${brand.image.replace('./', '')}');"></div>
+                <div class="card-content">
+                    <h1>${brand.name}</h1>
+                </div>
+            `;
+            card.addEventListener('click', () => showBrandDetail(brand.id));
+            brandListContainer.appendChild(card);
+        });
+    }
+
+    function showBrandDetail(brandId) {
+        console.log('Card clicked, brandId:', brandId);
+        const brandData = brands.find(brand => brand.id === brandId);
+        
+        if (brandData) {
+            console.log('Brand data found:', brandData);
+            // Store the brand details in localStorage
+            localStorage.setItem('currentBrand', JSON.stringify(brandData));
+
+            // Navigate to the brand detail page
+            window.location.href = 'brand-detail.html';
+        } else {
+            console.error('Brand data not found for id:', brandId);
+        }
+    }
 });

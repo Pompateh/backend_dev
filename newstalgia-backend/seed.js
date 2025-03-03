@@ -7,13 +7,12 @@ const Illustration = require("./models/Illustration");
 const Product = require("./models/Product");
 const Typeface = require("./models/Typeface");
 
-const path = require("path"); // ✅ Import path module
+const path = require("path");
 
 const brandsData = require(path.join(__dirname, "data", "brands.json"));
 const illustrationsData = require(path.join(__dirname, "data", "illustrations.json"));
 const productsData = require(path.join(__dirname, "data", "products.json"));
 const typefacesData = require(path.join(__dirname, "data", "typeface.json"));
-
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI || "mongodb+srv://heetranwork:31122000h@cluster0.x8whi.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
@@ -21,7 +20,6 @@ mongoose.connect(process.env.MONGO_URI || "mongodb+srv://heetranwork:31122000h@c
   useUnifiedTopology: true,
 });
 
-// Seed data
 const importData = async () => {
   try {
     await Brand.deleteMany();
@@ -42,4 +40,9 @@ const importData = async () => {
   }
 };
 
-importData();
+// Only run the seed if SEED_DATA environment variable is set to "true"
+if (process.env.SEED_DATA === "true") {
+  importData();
+} else {
+  console.log("Seeding skipped. Set SEED_DATA=true to import seed data.");
+}
