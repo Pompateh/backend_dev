@@ -59,6 +59,7 @@ router.delete("/:id", async (req, res) => {
     }
     res.json({ message: "Illustration deleted successfully" });
   } catch (err) {
+    console.error('Error deleting illustration:', err);
     res.status(500).json({ error: err.message });
   }
 });

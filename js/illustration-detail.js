@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to fetch illustrations data
     const fetchIllustrations = async () => {
         try {
-            const response = await fetch('./data/illustrations.json');
+            const response = await fetch('http://localhost:5000/api/illustrations');
             illustrations = await response.json();
             initializeIllustration();
         } catch (error) {

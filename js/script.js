@@ -146,7 +146,7 @@ const adjustCartQuantity = (product_id, change) => {
 
 // Initialize the app and fetch products
 const initApp = () => {
-    fetch('./data/products.json')  // Adjust this path based on your structure
+    fetch('http://localhost:5000/api/products')  // Update this URL to match your backend endpoint
         .then(response => response.json())
         .then(data => {
             listProducts = data;
@@ -155,7 +155,7 @@ const initApp = () => {
                 let storedCarts = JSON.parse(localStorage.getItem('cart'));
                 carts = storedCarts.filter(cart => listProducts.some(product => product.id == cart.product_id));
             }
-            addCarttoHTML(); // Moved outside the if block to ensure it's called after products are loaded
+            addCarttoHTML();
         })
         .catch(error => console.error('Error loading products:', error));
 }

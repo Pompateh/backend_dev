@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let illustrations = [];
 
     // Fetch the illustration data
-    fetch('../data/illustrations.json')  // Adjusted path to match the correct location
+    fetch('http://localhost:5000/api/illustrations')  // Adjusted path to match the correct location
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);

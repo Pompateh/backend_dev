@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let typefaces = [];
 
     // Fetch the typeface data
-    fetch('./data/typeface.json')  // Adjusted path to match the correct location
+    fetch('http://localhost:5000/api/typefaces')  // Adjusted path to match the correct location
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);

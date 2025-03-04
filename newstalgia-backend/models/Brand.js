@@ -7,6 +7,7 @@ const BrandSchema = new mongoose.Schema({
   story: { type: String },
   gridImage1: { type: String },
   gridImage2: { type: String },
+  gridImage3: { type: String },
   client: { type: String },
   publishedDate: { type: String },
 });

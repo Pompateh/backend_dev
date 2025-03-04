@@ -5,7 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const fetchBrands = async () => {
         try {
-            const response = await fetch('./data/brands.json');
+            // Update this URL to point to your backend API endpoint
+            const response = await fetch('http://localhost:5000/api/brands');
             brands = await response.json();
             initializeBrand();
         } catch (error) {
@@ -37,11 +38,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         <p>${currentBrand.story ? currentBrand.story : 'No story available for this brand.'}</p>
                     </div>
                     <div class="detail_img_grid">
-                        <img src="${currentBrand.image1}" alt="${currentBrand.name} Detail 1">
-                        <img src="${currentBrand.image2}" alt="${currentBrand.name} Detail 2">
+                        <img src="${currentBrand.gridImage1}" alt="${currentBrand.name} Detail 1">
+                        <img src="${currentBrand.gridImage2}" alt="${currentBrand.name} Detail 2">
                     </div>
                     <div class="detail_bottom_img">
-                        <img src="${currentBrand.image3}" alt="${currentBrand.name} Detail 3">
+                        <img src="${currentBrand.gridImage3}" alt="${currentBrand.name} Detail 3">
                     </div>
                 </div>
                 <div class="detail_end">

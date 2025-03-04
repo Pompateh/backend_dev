@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let brands = [];
 
     // Fetch the brand data
-    fetch('./data/brands.json')  // Adjust this path if needed
+    fetch('http://localhost:5000/api/brands')
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
