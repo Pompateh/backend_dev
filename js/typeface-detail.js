@@ -105,18 +105,19 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h3>Story</h3>
                         <p>${currentTypeface.story ? currentTypeface.story : 'No story available for this typeface.'}</p>
                     </div>
-                   <div class="detail_img_grid">
+                  <div class="detail_img_grid">
     <div class="img-carousel">
-        ${currentTypeface.images && currentTypeface.images.length > 0 ? `
+        ${currentTypeface.image1 ? `
             <div class="img-container">
-                <img src="${currentTypeface.images[0]}" alt="${currentTypeface.name} Detail 1">
-                ${currentTypeface.images.length > 1 ? `<img src="${currentTypeface.images[1]}" alt="${currentTypeface.name} Detail 2">` : ''}
+                <img src="${currentTypeface.image1}" alt="${currentTypeface.name} Detail 1">
+                ${currentTypeface.image2 ? `<img src="${currentTypeface.image2}" alt="${currentTypeface.name} Detail 2">` : ''}
             </div>
-            ${currentTypeface.images.length > 2 ? `
+            ${currentTypeface.image3 ? `
                 <button class="carousel-arrow next-arrow">&#8250;</button>
             ` : ''}
         ` : 'No images available'}
     </div>
+</div>
                     <div class="typeface_features">
                         <h3>Features:</h3>
                         <p>${currentTypeface.features || 'Glyph set: 394 / Uppercase & lowercase / Alternates / Numbers & fractions / Punctuation / Diacritics / Symbols & arrows / Currency Symbols / Ligatures / En & Vi / Variable'}</p>
@@ -174,19 +175,23 @@ characterInput.addEventListener('input', (e) => {
             });
     
             // Image carousel functionality
-            if (currentTypeface.images && currentTypeface.images.length > 2) {
-                const imgContainer = document.querySelector('.img-container');
-                const nextArrow = document.querySelector('.next-arrow');
-                let currentImageIndex = 0;
+// Image carousel functionality
+if (currentTypeface.image3) {
+    const imgContainer = document.querySelector('.img-container');
+    const nextArrow = document.querySelector('.next-arrow');
+    let currentImageIndex = 1;
 
-                nextArrow.addEventListener('click', () => {
-                    currentImageIndex = (currentImageIndex + 2) % currentTypeface.images.length;
-                    imgContainer.innerHTML = `
-                        <img src="${currentTypeface.images[currentImageIndex]}" alt="${currentTypeface.name} Detail ${currentImageIndex + 1}">
-                        ${currentTypeface.images[currentImageIndex + 1] ? `<img src="${currentTypeface.images[currentImageIndex + 1]}" alt="${currentTypeface.name} Detail ${currentImageIndex + 2}">` : ''}
-                    `;
-                });
-            }
+    nextArrow.addEventListener('click', () => {
+        currentImageIndex = (currentImageIndex % 2) + 1;
+        let firstImage = currentTypeface[`image${currentImageIndex * 2 - 1}`];
+        let secondImage = currentTypeface[`image${currentImageIndex * 2}`];
+        
+        imgContainer.innerHTML = `
+            <img src="${firstImage}" alt="${currentTypeface.name} Detail ${currentImageIndex * 2 - 1}">
+            ${secondImage ? `<img src="${secondImage}" alt="${currentTypeface.name} Detail ${currentImageIndex * 2}">` : ''}
+        `;
+    });
+}
         }).catch(error => {
             console.error('Error loading font:', error);
         });

@@ -16,7 +16,12 @@ const TypefaceSchema = new mongoose.Schema({
   xHeight: { type: String },
   baseLine: { type: String },
   descender: { type: String },
-  image: { type: String }
+  image: { type: String },
+  image1: { type: String },
+  image2: { type: String },
+  image3: { type: String },
+  image4: { type: String },
+  image5: { type: String }
 });
 
 module.exports = mongoose.model("Typeface", TypefaceSchema);
