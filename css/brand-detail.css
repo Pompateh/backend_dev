@@ -145,4 +145,11 @@ body{
 }
 
 
+.detail_bottom_img img {
+    width: 100%;
+    height: 449px;
+    border-radius: 15px;
+    margin-top: 20px;
+}
+
 
