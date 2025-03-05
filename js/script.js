@@ -20,20 +20,21 @@ closeCart.addEventListener('click', () => {
 
 // Function to render product list
 const addDatatoHTML = () => {
-    listProductHTML.innerHTML = '';  // Clear any static content
+    listProductHTML.innerHTML = '';
     if (listProducts.length > 0) {
         listProducts.forEach(product => {
             let newProduct = document.createElement('div');
             newProduct.classList.add('item');
-            newProduct.dataset.id = product.id;
+            newProduct.dataset.id = product._id;
             newProduct.innerHTML = `
-            <div class="price-tag">${product.price}$</div>
-            <img src="${product.image}" alt="${product.name}">
-            <h2>${product.name}</h2>
-            <p>${product.type}</p>
-                </div>
+                <div class="price-tag">${product.price}$</div>
+                <img src="${product.image}" alt="${product.name}">
+                <h2>${product.name}</h2>
+                <p>${product.type}</p>
             `;
-            newProduct.addEventListener('click', () => showProductDetail(product.id));
+            newProduct.addEventListener('click', () => {
+                showProductDetail(product._id);
+            });
             listProductHTML.appendChild(newProduct);
         });
     }
@@ -41,12 +42,13 @@ const addDatatoHTML = () => {
 
 // Function to show product detail
 const showProductDetail = (productId) => {
-    const product = listProducts.find(p => p.id == productId);
+    const product = listProducts.find(p => p._id === productId);
     if (product) {
-        // Store the product details in localStorage
+        console.log('Showing product detail for:', product);
         localStorage.setItem('currentProduct', JSON.stringify(product));
-        // Navigate to the product detail page
         window.location.href = 'product-detail.html';
+    } else {
+        console.error(`Product not found for id: ${productId}`);
     }
 }
 
@@ -54,27 +56,34 @@ const showProductDetail = (productId) => {
 listProductHTML.addEventListener('click', (event) => {
     let positionClick = event.target;
     if (positionClick.classList.contains('product-buy')) {
-        let product_id = positionClick.parentElement.dataset.id;
+        let product_id = positionClick.dataset.id;
         addToCart(product_id);
     }
 });
 
 // Function to add a product to the cart
 const addToCart = (product_id) => {
-    let positionThisProductInCart = carts.findIndex(value => value.product_id == product_id);
+    console.log('Adding to cart, product_id:', product_id);
+    if (!product_id) {
+        console.error('Invalid product_id:', product_id);
+        return;
+    }
+    let positionThisProductInCart = carts.findIndex(value => value.product_id === product_id);
     if (positionThisProductInCart < 0) {
-        // Add new product to the cart
+        console.log('New item in cart');
         carts.push({
             product_id: product_id,
             quantity: 1
         });
     } else {
-        // Increment quantity of the existing product in the cart
+        console.log('Increasing quantity of existing item');
         carts[positionThisProductInCart].quantity += 1;
     }
-    addCarttoHTML();  // Update cart display
-    addCartToMemory(); // Save cart to localStorage
+    console.log('Updated cart:', carts);
+    addCarttoHTML();
+    addCartToMemory();
 }
+
 
 // Function to save cart to local storage
 const addCartToMemory = () => {
@@ -91,7 +100,11 @@ const addCarttoHTML = () => {
     let totalQuantity = 0;
     if (carts.length > 0) {
         carts.forEach(cart => {
-            let info = listProducts.find(p => p.id == cart.product_id);
+            if (!cart.product_id) {
+                console.error('Invalid cart item:', cart);
+                return;
+            }
+            let info = listProducts.find(p => p._id === cart.product_id);
             if (info) {
                 totalQuantity += cart.quantity;
                 let newCart = document.createElement('div');
@@ -107,9 +120,9 @@ const addCarttoHTML = () => {
                         ${(info.price * cart.quantity).toFixed(2)}$
                     </div>
                     <div class="quantity">
-                        <span class="minus" data-id="${cart.product_id}"><</span>
+                        <span class="minus" data-id="${cart.product_id}">-</span>
                         <span>${cart.quantity}</span>
-                        <span class="plus" data-id="${cart.product_id}">></span>
+                        <span class="plus" data-id="${cart.product_id}">+</span>
                     </div>
                 `;
                 listCartHTML.appendChild(newCart);
@@ -124,36 +137,39 @@ const addCarttoHTML = () => {
 // Event listener for adjusting quantities in the cart
 listCartHTML.addEventListener('click', (event) => {
     let positionClick = event.target;
-    if (positionClick.classList.contains('minus')) {
-        adjustCartQuantity(positionClick.dataset.id, -1);
-    } else if (positionClick.classList.contains('plus')) {
-        adjustCartQuantity(positionClick.dataset.id, 1);
+    if (positionClick.classList.contains('minus') || positionClick.classList.contains('plus')) {
+        let product_id = positionClick.dataset.id;
+        let change = positionClick.classList.contains('plus') ? 1 : -1;
+        adjustCartQuantity(product_id, change);
     }
 });
 
 // Function to adjust the quantity of a product in the cart
 const adjustCartQuantity = (product_id, change) => {
-    let positionThisProductInCart = carts.findIndex(value => value.product_id == product_id);
+    console.log('Adjusting quantity, product_id:', product_id, 'change:', change);
+    let positionThisProductInCart = carts.findIndex(value => value.product_id === product_id);
     if (positionThisProductInCart >= 0) {
         carts[positionThisProductInCart].quantity += change;
         if (carts[positionThisProductInCart].quantity <= 0) {
             carts.splice(positionThisProductInCart, 1);
         }
     }
-    addCarttoHTML(); // Update cart display
-    addCartToMemory(); // Save cart to localStorage
+    console.log('Updated cart:', carts);
+    addCarttoHTML();
+    addCartToMemory();
 }
 
 // Initialize the app and fetch products
 const initApp = () => {
-    fetch('http://localhost:5000/api/products')  // Update this URL to match your backend endpoint
+    fetch('http://localhost:5000/api/products')
         .then(response => response.json())
         .then(data => {
             listProducts = data;
+            console.log('listProducts:', listProducts);
             addDatatoHTML();
             if (localStorage.getItem('cart')) {
                 let storedCarts = JSON.parse(localStorage.getItem('cart'));
-                carts = storedCarts.filter(cart => listProducts.some(product => product.id == cart.product_id));
+                carts = storedCarts.filter(cart => listProducts.some(product => product._id === cart.product_id));
             }
             addCarttoHTML();
         })
@@ -163,6 +179,10 @@ const initApp = () => {
 
 // Event listener for checkout button
 
+window.addEventListener('cartUpdated', () => {
+    carts = JSON.parse(localStorage.getItem('cart')) || [];
+    addCarttoHTML();
+});
 checkoutButton.addEventListener('click', () => {
     window.location.href = 'checkout.html';
 });

@@ -15,8 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const initializeProduct = () => {
         const urlParams = new URLSearchParams(window.location.search);
-        const productId = parseInt(urlParams.get('id'));
-        currentProduct = products.find(prod => prod.id === productId) || products[0];
+        const productId = urlParams.get('id');
+        currentProduct = products.find(prod => prod._id == productId) || products[0];
+        console.log('Current product:', currentProduct); // Add this for debugging
         renderProductDetail();
     };
 
@@ -54,7 +55,7 @@ const renderProductDetail = () => {
 
         document.getElementById('addToCart').addEventListener('click', (e) => {
             e.preventDefault();
-            addToCart(currentProduct.id);
+            addToCart(currentProduct._id);
             alert('Product added to cart!');
         });
 
@@ -69,7 +70,7 @@ const renderProductDetail = () => {
 
 const navigateToNext = (e) => {
     e.preventDefault();
-    const currentIndex = products.findIndex(prod => prod.id === currentProduct.id);
+    const currentIndex = products.findIndex(prod => prod._id === currentProduct._id);
     const nextIndex = (currentIndex + 1) % products.length;
     currentProduct = products[nextIndex];
     updateURL();
@@ -78,7 +79,7 @@ const navigateToNext = (e) => {
 
 const navigateToPrev = (e) => {
     e.preventDefault();
-    const currentIndex = products.findIndex(prod => prod.id === currentProduct.id);
+    const currentIndex = products.findIndex(prod => prod._id === currentProduct._id);
     const prevIndex = (currentIndex - 1 + products.length) % products.length;
     currentProduct = products[prevIndex];
     updateURL();
@@ -86,23 +87,51 @@ const navigateToPrev = (e) => {
 };
 
 const updateURL = () => {
-    const newUrl = `${window.location.pathname}?id=${currentProduct.id}`;
+    const newUrl = `${window.location.pathname}?id=${currentProduct._id}`;
     history.pushState(null, '', newUrl);
 };
 
+
 const addToCart = (product_id) => {
+    console.log('Adding to cart, product_id:', product_id);
+    if (!product_id) {
+        console.error('Invalid product_id:', product_id);
+        return;
+    }
     let carts = JSON.parse(localStorage.getItem('cart')) || [];
-    let positionThisProductInCart = carts.findIndex(value => value.product_id == product_id);
+    let positionThisProductInCart = carts.findIndex(value => value.product_id === product_id);
     if (positionThisProductInCart < 0) {
+        console.log('New item in cart');
         carts.push({
             product_id: product_id,
             quantity: 1
         });
     } else {
+        console.log('Increasing quantity of existing item');
         carts[positionThisProductInCart].quantity += 1;
     }
+    console.log('Updated cart:', carts);
     localStorage.setItem('cart', JSON.stringify(carts));
+    updateCartIcon();
 };
 
+const updateCartIcon = () => {
+    const carts = JSON.parse(localStorage.getItem('cart')) || [];
+    const totalQuantity = carts.reduce((total, item) => total + item.quantity, 0);
+    const iconCartSpan = document.querySelector('.icon_cart span');
+    if (iconCartSpan) {
+        iconCartSpan.innerText = totalQuantity;
+    }
+};
+
+const initProductDetail = () => {
+    currentProduct = JSON.parse(localStorage.getItem('currentProduct'));
+    if (currentProduct) {
+        renderProductDetail();
+        updateCartIcon();
+    } else {
+        console.error('No product found in localStorage');
+    }
+};
 fetchProducts();
 });
