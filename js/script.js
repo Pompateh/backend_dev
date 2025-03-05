@@ -46,7 +46,7 @@ const showProductDetail = (productId) => {
     if (product) {
         console.log('Showing product detail for:', product);
         localStorage.setItem('currentProduct', JSON.stringify(product));
-        window.location.href = 'product-detail.html';
+        window.location.href = `product-detail.html?id=${product._id}`;
     } else {
         console.error(`Product not found for id: ${productId}`);
     }
